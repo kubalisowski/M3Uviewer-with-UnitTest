@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Data;
 using Microsoft.Win32;
 using System.Windows.Forms.VisualStyles;
+using System.Runtime.CompilerServices;
 
 namespace PlaylistMain
 {
@@ -36,8 +37,8 @@ namespace PlaylistMain
         ///////////////////
 
         /// VARIABLES ////
-        ObservableCollection<M3USingleItem> M3USingleItems = new ObservableCollection<M3USingleItem>();
-        List<M3UItem> M3UItems = new List<M3UItem>();
+        public static ObservableCollection<M3USingleItem> M3USingleItems = new ObservableCollection<M3USingleItem>();
+        public static List<M3UItem> M3UItems = new List<M3UItem>();
         /////////////////
 
         ///// METHODS /////
@@ -65,7 +66,7 @@ namespace PlaylistMain
         }
 
         // Get selected M3U
-        private List<string> selectedItems()
+        public List<string> selectedItems()
         {
             // Linq used - https://stackoverflow.com/questions/22950545/fill-string-array-with-listbox-selected-items-in-c-sharp
             List<string> items = (from string s in filesListBox.SelectedItems select s).ToList();
@@ -73,7 +74,8 @@ namespace PlaylistMain
             return items;
         }
 
-        // Display selected M3U(s) content
+        /////////// MOVED TO LOAD CLASS
+        //// Display selected M3U(s) content
         private void loadM3U()
         {
             M3USingleItems.Clear();
@@ -90,15 +92,19 @@ namespace PlaylistMain
                     M3USingleItems.Add(new M3USingleItem(line, m3UItem.Name));
                 }
             }
-        }
 
+            btnLoadFile.IsEnabled = true;
+        }
+        /////////// MOVED TO LOAD CLASS
         /// CRAP - NEED TO BE CORRECTED
-        private void loadFile()
+        // TODO: Change to private after test?
+        public void loadFile()
         {
             // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
             OpenFileDialog FileDialog = new OpenFileDialog();
             FileDialog.Multiselect = true;
             FileDialog.DefaultExt = ".m3u";
+            FileDialog.Filter = "M3U (.m3u)|*.m3u|All files (*.*)|*.*";
             bool? result = FileDialog.ShowDialog();
             //... equals: Nullable<bool> result = LoadFile.ShowDialog();
 
@@ -106,11 +112,10 @@ namespace PlaylistMain
             {
                 foreach (string path in FileDialog.FileNames)
                 {
-                    M3USingleItems.Add(new M3USingleItem(FileDialog.FileName, "AddedFile", LoadOptions));
+                    M3USingleItems.Add(new M3USingleItem(/*FileDialog.FileName*/path, "AddedFile", M3UItems[0].LoadSnapshot["ShowComments"]));
                 }
             }
         }
-
         /////////////////////////
 
 
@@ -146,23 +151,13 @@ namespace PlaylistMain
         ///// BUTTONS /////
         private void btnLoadM3U_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: TEST
-            foreach (var item in M3UItems)
-            {
-                foreach (var line in item.FormatedContent)
-                {
-                    Console.WriteLine(line);
-                }
-                
-            }
-
             loadM3U();
         }
 
         ///// LISTVIEW /////
         private void filesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
             {
-
+                btnLoadM3U.IsEnabled = true;
             }
 
         ///// CHECKBOXES | LOAD OPTIONS /////
@@ -176,6 +171,12 @@ namespace PlaylistMain
         private void showPath_Checked(object sender, RoutedEventArgs e)
         {
             LoadOptions.ShowPath = (bool)showPath.IsChecked;
+        }
+
+
+        private void btnLoadFile_Click(object sender, RoutedEventArgs e)
+        {
+            loadFile();
         }
     }
 }

@@ -7,23 +7,34 @@ using System.Threading.Tasks;
 
 namespace PlaylistMain
 {
-    class M3USingleItem : M3U
+    public class M3USingleItem : M3U
     {
         public string ContentLine { get; set; }
         public string Name { get; set; }
         public string fullPath { get; set; }
 
-        ///// M3U object origin
-        //public M3USingleItem(string name, string line)
-        //{
-        //    Name = name;
-        //    ContentLine = line;
-        //}
-        ///// Loaded file
-        /// Probably to be deleted - overload in use DRY
-        public M3USingleItem(string path, string name, LoadOptions LoadOptions)
+        //// For single file
+        public M3USingleItem(string path, string name, bool? ShowComments)
         {
-            ContentLine = DisplayContentLine(path, LoadOptions);
+            if (ShowComments == false)
+            {
+                List<string> temp = HidePath(new List<string>() { path });
+                ContentLine = temp[0];
+            }
+            else
+            {
+                ContentLine = path;
+            }
+
+            Name = name;
+            fullPath = path; // related to RawContent (List<string>) in M3USingleItem class
+        }
+
+        //// For M3U lines (M3UItem -> LoadSnapshot property)
+        public M3USingleItem(string path, string name, Dictionary<string, bool?> LoadSnapshot)
+        {
+
+            ContentLine = DisplayContentLine(path, new LoadOptions(LoadSnapshot["ShowComments"], LoadSnapshot["ShowPath"]));
             Name = name;
             fullPath = path; // related to RawContent (List<string>) in M3USingleItem class
         }

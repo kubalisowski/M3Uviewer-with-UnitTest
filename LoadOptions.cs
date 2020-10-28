@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PlaylistMain
 {
-    class LoadOptions
+    public class LoadOptions
     {
         private bool showComments;
         public bool ShowComments
@@ -39,6 +39,13 @@ namespace PlaylistMain
             // Defaults; unchecked in UI by default
             ShowComments = false;
             ShowPath = false;
+        }
+        // Overload for single file load (M3UItem -> LoadSnapshot property)
+        public LoadOptions(bool? showComments, bool? showPath)
+        {
+            // Defaults; unchecked in UI by default
+            ShowComments = (bool)showComments;
+            ShowPath = (bool)showPath;
         }
     }
 }

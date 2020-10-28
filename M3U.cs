@@ -11,14 +11,15 @@ using System.Drawing;
 using System.Windows.Diagnostics;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using System.Data;
 
 namespace PlaylistMain
 {
-    class M3U
+    public class M3U
     {
-        public FileInfo[] M3Ufiles;
+        public static FileInfo[] M3Ufiles;
         // Encapsulation
-        private List<FileInfo> selectedM3U = new List<FileInfo>();
+        private static List<FileInfo> selectedM3U = new List<FileInfo>();
         // Var binded to loadedM3U.ItemsSource
         public ObservableCollection<object> ItemsM3U
             = new ObservableCollection<object>();
@@ -50,7 +51,7 @@ namespace PlaylistMain
             return strNameNoExt;
         }
 
-        public List<FileInfo> GetSelectedM3UInfo(List<string> selectedItems)
+        public static List<FileInfo> GetSelectedM3UInfo(List<string> selectedItems)
         {
             // Clear List to avoid previous, irrelevant data
             selectedM3U.Clear();
@@ -151,6 +152,7 @@ namespace PlaylistMain
                 return noPath[0];
             }
         }
+        
 
 
         /////// Combine above
@@ -202,6 +204,23 @@ namespace PlaylistMain
 
         //    return fullLine;
         //}
+        public string DisplayContentLine(List<string> lines, LoadOptions LoadOptions)
+        {
+            string finalLine = "";
+            foreach (string fullLine in lines)
+            {
+                if (LoadOptions.ShowPath == true)
+                {
+                    finalLine = fullLine;
+                }
+                else
+                {
+                    finalLine = HidePath(fullLine);
+                }
+            }
+
+            return finalLine;
+        }
         public string DisplayContentLine(string fullLine, LoadOptions LoadOptions)
         {
             // temp variable
