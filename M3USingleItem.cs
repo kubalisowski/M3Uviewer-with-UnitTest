@@ -14,9 +14,9 @@ namespace PlaylistMain
         public string fullPath { get; set; }
 
         //// For single file
-        public M3USingleItem(string path, string name, bool? ShowComments)
+        public M3USingleItem(string path, string name, bool? ShowPath)
         {
-            if (ShowComments == false)
+            if (ShowPath == false)
             {
                 List<string> temp = HidePath(new List<string>() { path });
                 ContentLine = temp[0];
@@ -31,13 +31,13 @@ namespace PlaylistMain
         }
 
         //// For M3U lines (M3UItem -> LoadSnapshot property)
-        public M3USingleItem(string path, string name, Dictionary<string, bool?> LoadSnapshot)
-        {
+        //public M3USingleItem(string path, string name, Dictionary<string, bool?> LoadSnapshot)
+        //{
 
-            ContentLine = DisplayContentLine(path, new LoadOptions(LoadSnapshot["ShowComments"], LoadSnapshot["ShowPath"]));
-            Name = name;
-            fullPath = path; // related to RawContent (List<string>) in M3USingleItem class
-        }
+        //    ContentLine = DisplayContentLine(path, new LoadOptions(LoadSnapshot["ShowComments"], LoadSnapshot["ShowPath"]));
+        //    Name = name;
+        //    fullPath = path; // related to RawContent (List<string>) in M3USingleItem class
+        //}
 
         public M3USingleItem(string line, string name)
         {

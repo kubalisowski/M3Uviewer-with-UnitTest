@@ -312,69 +312,69 @@ namespace PlaylistMain
         ///////// Above method overload for each cases mirror List<string> DisplayContent
 
 
-        private Dictionary<int, string> CommentIndexer(ObservableCollection<M3USingleItem> actualItemsM3U, LoadOptions LoadOptions, List<M3UItem> M3UItems)
-        {
-            /// <index, comment> -- comments to be put at the same indexes as they are originally in M3U file
-            Dictionary<int, string> indexComment = new Dictionary<int, string>();
-            /// Only one M3U file can be edited at the time, but the list is used for further changes
-            foreach (M3UItem M3U in M3UItems)
-            {
-                foreach (string line in M3U.RawContent)
-                {
-                    Match matchComment = Regex.Match(line, @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                    if (matchComment.Success)
-                    {
-                        indexComment.Add(M3U.RawContent.IndexOf(line), line);
-                    }
-                }
-            }
+        //private Dictionary<int, string> CommentIndexer(ObservableCollection<M3USingleItem> actualItemsM3U, LoadOptions LoadOptions, List<M3UItem> M3UItems)
+        //{
+        //    /// <index, comment> -- comments to be put at the same indexes as they are originally in M3U file
+        //    Dictionary<int, string> indexComment = new Dictionary<int, string>();
+        //    /// Only one M3U file can be edited at the time, but the list is used for further changes
+        //    foreach (M3UItem M3U in M3UItems)
+        //    {
+        //        foreach (string line in M3U.RawContent)
+        //        {
+        //            Match matchComment = Regex.Match(line, @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        //            if (matchComment.Success)
+        //            {
+        //                indexComment.Add(M3U.RawContent.IndexOf(line), line);
+        //            }
+        //        }
+        //    }
 
-            return indexComment;
-        }
+        //    return indexComment;
+        //}
 
 
-        /// Re-load M3U displayed content
-        public ObservableCollection<M3USingleItem> ReloadEditBox(ObservableCollection<M3USingleItem> ObsItemsM3U, LoadOptions LoadOptions, List<M3UItem> M3UItems)
-        {
-            ObservableCollection<M3USingleItem> ReloadedItems = new ObservableCollection<M3USingleItem>();
-            /// <index, comment> -- comments to be put at the same list indexes as they are originally in M3U file
-            Dictionary<int, string> indexComment = new Dictionary<int, string>();
+        ///// Re-load M3U displayed content
+        //public ObservableCollection<M3USingleItem> ReloadEditBox(ObservableCollection<M3USingleItem> ObsItemsM3U, LoadOptions LoadOptions, List<M3UItem> M3UItems)
+        //{
+        //    ObservableCollection<M3USingleItem> ReloadedItems = new ObservableCollection<M3USingleItem>();
+        //    /// <index, comment> -- comments to be put at the same list indexes as they are originally in M3U file
+        //    Dictionary<int, string> indexComment = new Dictionary<int, string>();
 
-            foreach (M3USingleItem single_item in ObsItemsM3U)
-            {
-                /// Loaded file
-                if (single_item.Name == "AddedFile")
-                {
-                    single_item.ContentLine = DisplayContentLine(single_item.fullPath, LoadOptions);
-                    ReloadedItems.Add(single_item);
-                }
-                /// M3U origin
-                else
-                {
-                    /// Show path
-                    if (LoadOptions.ShowPath == true)
-                    {
-                        single_item.ContentLine = DisplayContentLine(single_item.fullPath, LoadOptions);
-                        ReloadedItems.Add(single_item);
-                    }
-                    /// Restore comments - put them in the same list index as it is in M3U file
-                    if (LoadOptions.ShowComments == true)
-                    {
-                        indexComment = CommentIndexer(ObsItemsM3U, LoadOptions, M3UItems);
-                    }
-                }
-            }
+        //    foreach (M3USingleItem single_item in ObsItemsM3U)
+        //    {
+        //        /// Loaded file
+        //        if (single_item.Name == "AddedFile")
+        //        {
+        //            single_item.ContentLine = DisplayContentLine(single_item.fullPath, LoadOptions);
+        //            ReloadedItems.Add(single_item);
+        //        }
+        //        /// M3U origin
+        //        else
+        //        {
+        //            /// Show path
+        //            if (LoadOptions.ShowPath == true)
+        //            {
+        //                single_item.ContentLine = DisplayContentLine(single_item.fullPath, LoadOptions);
+        //                ReloadedItems.Add(single_item);
+        //            }
+        //            /// Restore comments - put them in the same list index as it is in M3U file
+        //            if (LoadOptions.ShowComments == true)
+        //            {
+        //                indexComment = CommentIndexer(ObsItemsM3U, LoadOptions, M3UItems);
+        //            }
+        //        }
+        //    }
 
-            if (indexComment.Count() > 0)
-            {
-                foreach (var dict in indexComment)
-                {
-                    ReloadedItems.Insert(dict.Key, new M3USingleItem(dict.Value, M3UItems[0].Name));
-                }
-            }
+        //    if (indexComment.Count() > 0)
+        //    {
+        //        foreach (var dict in indexComment)
+        //        {
+        //            ReloadedItems.Insert(dict.Key, new M3USingleItem(dict.Value, M3UItems[0].Name));
+        //        }
+        //    }
 
-            return ReloadedItems;
-        }
+        //    return ReloadedItems;
+        //}
     }
 }
     ////////////////////////////////

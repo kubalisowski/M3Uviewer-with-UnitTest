@@ -81,6 +81,18 @@ namespace PlaylistMain
             }
         }
 
+        private Dictionary<int, string> indexedContent;
+        public Dictionary<int, string> IndexedContent
+        {
+            get
+            {
+                return indexedContent;
+            }
+            set
+            {
+                indexedContent = value;
+            }
+        }
 
         ///// CONSTRUCTORS
         // Main M3U file (with all content)
@@ -89,18 +101,24 @@ namespace PlaylistMain
             Name = FileNameNoExt(m3uFile.Name);
             M3UInfo = m3uFile;
             RawContent = ReadM3U(m3uFile); // related to fullPath(string) in M3USingleItem class
+            /*RawContent*/ ContentIndexer();
             FormatedContent = DisplayContentM3U(m3uFile, LoadOptions);
             LoadSnapshot["ShowComments"] = LoadOptions.ShowComments;
             LoadSnapshot["ShowPath"] = LoadOptions.ShowPath;
         }
-        // Overload for LoadSnapshot
-        public M3UItem(FileInfo m3uFile, Dictionary<string, bool?> loadSnapshot)
+
+        public void ContentIndexer()
         {
-            Name = FileNameNoExt(m3uFile.Name);
-            M3UInfo = m3uFile;
-            RawContent = ReadM3U(m3uFile); // related to fullPath(string) in M3USingleItem class
-            FormatedContent = DisplayContentM3U(m3uFile, new LoadOptions(loadSnapshot["ShowComments"], loadSnapshot["ShowPath"]));
-            LoadSnapshot = loadSnapshot;
+            if (RawContent.Count > 0)
+            {
+                IndexedContent = RawContent.Select((val, index) => new { Index = index, Value = val })
+               .ToDictionary(i => i.Index, i => i.Value);
+
+                //foreach (KeyValuePair<int, string> i in IndexedContent)
+                //{
+                //    Console.WriteLine(i.Key + " : " + i.Value);
+                //}
+            }
         }
     }
 }

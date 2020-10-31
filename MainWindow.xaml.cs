@@ -63,6 +63,7 @@ namespace PlaylistMain
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             reloadListBox(PathFinder, M3U, filesListBox);
+            
         }
 
         // Get selected M3U
@@ -74,7 +75,6 @@ namespace PlaylistMain
             return items;
         }
 
-        /////////// MOVED TO LOAD CLASS
         //// Display selected M3U(s) content
         private void loadM3U()
         {
@@ -95,8 +95,7 @@ namespace PlaylistMain
 
             btnLoadFile.IsEnabled = true;
         }
-        /////////// MOVED TO LOAD CLASS
-        /// CRAP - NEED TO BE CORRECTED
+
         // TODO: Change to private after test?
         public void loadFile()
         {
@@ -112,11 +111,42 @@ namespace PlaylistMain
             {
                 foreach (string path in FileDialog.FileNames)
                 {
-                    M3USingleItems.Add(new M3USingleItem(/*FileDialog.FileName*/path, "AddedFile", M3UItems[0].LoadSnapshot["ShowComments"]));
+                    M3USingleItems.Add(new M3USingleItem(/*FileDialog.FileName*/path, "AddedFile", M3UItems[0].LoadSnapshot["ShowPath"]));
                 }
             }
         }
-        /////////////////////////
+
+        private void MoveItem(string direction)
+        {
+            var selectedIndex = editM3U.SelectedIndex;
+            var itemToMove = M3USingleItems[selectedIndex];
+
+            void Move(int directValue)
+            {
+                M3USingleItems.RemoveAt(selectedIndex);
+                M3USingleItems.Insert(selectedIndex + directValue, itemToMove);
+                editM3U.SelectedIndex = selectedIndex + directValue;
+            }
+
+            switch (direction)
+            {
+                case "up":
+                    if (selectedIndex > 0)
+                    {
+                        Move(-1);
+                    }
+                    break;
+
+                case "down":
+                    if (selectedIndex + 1 < M3USingleItems.Count)
+                    {
+                        Move(1);
+                    }
+                    break;
+            }
+        }
+        //////////////////////////
+
 
 
         //////// CONTROLS ////////
@@ -152,6 +182,9 @@ namespace PlaylistMain
         private void btnLoadM3U_Click(object sender, RoutedEventArgs e)
         {
             loadM3U();
+            //btnUp.IsEnabled = true;
+            //btnDown.IsEnabled = true;
+            btnSave.IsEnabled = true;
         }
 
         ///// LISTVIEW /////
@@ -177,6 +210,48 @@ namespace PlaylistMain
         private void btnLoadFile_Click(object sender, RoutedEventArgs e)
         {
             loadFile();
+        }
+
+        private void btnUp_Click(object sender, RoutedEventArgs e)
+        {
+            if (editM3U.SelectedIndex != 1)
+                btnUp.IsEnabled = true;
+
+            MoveItem("up");
+            // UP
+            //var selectedIndex = editM3U.SelectedIndex;
+
+            //if (selectedIndex > 0)
+            //{
+            //    var itemToMoveUp = M3USingleItems[selectedIndex];
+            //    M3USingleItems.RemoveAt(selectedIndex);
+            //    M3USingleItems.Insert(selectedIndex - 1, itemToMoveUp);
+            //    editM3U.SelectedIndex = selectedIndex - 1;
+            //}
+        }
+
+        private void btnDown_Click(object sender, RoutedEventArgs e)
+        {
+            if (editM3U.SelectedIndex != 1)
+                btnDown.IsEnabled = true;
+
+            MoveItem("down");
+            // DOWN
+            //var selectedIndex = editM3U.SelectedIndex;
+
+            //if (selectedIndex + 1 < M3USingleItems.Count)
+            //{
+            //    var itemToMoveDown = M3USingleItems[selectedIndex];
+            //    M3USingleItems.RemoveAt(selectedIndex);
+            //    M3USingleItems.Insert(selectedIndex + 1, itemToMoveDown);
+            //    editM3U.SelectedIndex = selectedIndex + 1;
+            //}
+        }
+
+        private void editM3U_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            btnUp.IsEnabled = true;
+            btnDown.IsEnabled = true;
         }
     }
 }
