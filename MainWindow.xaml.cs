@@ -37,8 +37,9 @@ namespace PlaylistMain
             showPath.Content = AppStrings.Items["ShowPath"];
             btnLoadFile.Content = AppStrings.Items["LoadFile"];
             btnSave.Content = AppStrings.Items["Save"];
-            btnUp.Content = AppStrings.Items["Save"];
+            btnUp.Content = AppStrings.Items["Up"];
             btnDown.Content = AppStrings.Items["Down"];
+            btnRemove.Content = AppStrings.Items["Remove"];
         }
 
         ///// OBJECTS /////
@@ -156,9 +157,21 @@ namespace PlaylistMain
                     break;
             }
         }
+
+        private void RemoveItem()
+        {
+            if (editM3U.Items.Count > 0)
+            {
+                var selectedIndex = editM3U.SelectedIndex;
+                M3USingleItems.RemoveAt(selectedIndex);
+                editM3U.SelectedIndex = selectedIndex - 1;
+            }
+            else
+            {
+                btnRemove.IsEnabled = false;
+            }
+        }
         //////////////////////////
-
-
 
         //////// CONTROLS ////////
 
@@ -193,30 +206,8 @@ namespace PlaylistMain
         private void btnLoadM3U_Click(object sender, RoutedEventArgs e)
         {
             loadM3U();
-            //btnUp.IsEnabled = true;
-            //btnDown.IsEnabled = true;
             btnSave.IsEnabled = true;
         }
-
-        ///// LISTVIEW /////
-        private void filesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-            {
-                btnLoadM3U.IsEnabled = true;
-            }
-
-        ///// CHECKBOXES | LOAD OPTIONS /////
-        /// Show Comments
-        private void showComments_Checked(object sender, RoutedEventArgs e)
-        {
-            LoadOptions.ShowComments = (bool)showComments.IsChecked;
-        }
-
-        /// Show Path
-        private void showPath_Checked(object sender, RoutedEventArgs e)
-        {
-            LoadOptions.ShowPath = (bool)showPath.IsChecked;
-        }
-
 
         private void btnLoadFile_Click(object sender, RoutedEventArgs e)
         {
@@ -259,11 +250,35 @@ namespace PlaylistMain
             //}
         }
 
+        private void btnRemove_Click(object sender, RoutedEventArgs e)
+        {
+            RemoveItem();
+        }
+
+        ///// LISTVIEW | LISTBOX /////
+        private void filesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+            {
+                btnLoadM3U.IsEnabled = true;
+            }
         private void editM3U_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             btnUp.IsEnabled = true;
             btnDown.IsEnabled = true;
+            btnRemove.IsEnabled = true;
         }
+
+        ///// CHECKBOXES | LOAD OPTIONS /////
+        /// Show Comments
+        private void showComments_Checked(object sender, RoutedEventArgs e)
+        {
+            LoadOptions.ShowComments = (bool)showComments.IsChecked;
+        }
+
+        /// Show Path
+        private void showPath_Checked(object sender, RoutedEventArgs e)
+        {
+            LoadOptions.ShowPath = (bool)showPath.IsChecked;
+        } 
     }
 }
 
