@@ -28,6 +28,17 @@ namespace PlaylistMain
         {
             InitializeComponent();
             editM3U.ItemsSource = M3USingleItems;
+            groupBox.Header = AppStrings.Items["PathsHeader"];
+            Agora.Content = AppStrings.Items["Path1"];
+            Eurozet.Content = AppStrings.Items["Path2"];
+            Lokalne.Content = AppStrings.Items["Path3"];
+            btnLoadM3U.Content = AppStrings.Items["LoadM3U"];
+            showComments.Content = AppStrings.Items["ShowComments"];
+            showPath.Content = AppStrings.Items["ShowPath"];
+            btnLoadFile.Content = AppStrings.Items["LoadFile"];
+            btnSave.Content = AppStrings.Items["Save"];
+            btnUp.Content = AppStrings.Items["Save"];
+            btnDown.Content = AppStrings.Items["Down"];
         }
 
         ///// OBJECTS /////
