@@ -55,8 +55,21 @@ namespace PlaylistMain
             }
         }
 
-        private List<string> formatedContent;
-        public List<string> FormatedContent
+        //private List<string> _formatedContent;
+        //public List<string> _FormatedContent
+        //{
+        //    get
+        //    {
+        //        return _formatedContent;
+        //    }
+        //    set
+        //    {
+        //        _formatedContent = value;
+        //    }
+        //}
+
+        private Dictionary<string, string> formatedContent;
+        public Dictionary<string, string> FormatedContent
         {
             get
             {
@@ -68,29 +81,29 @@ namespace PlaylistMain
             }
         }
 
-        private List<string> rawContent;
-        public List<string> RawContent
-        {
-            get
-            {
-                return rawContent;
-            }
-            set
-            {
-                rawContent = value;
-            }
-        }
+        //private List<string> rawContent;
+        //public List<string> RawContent
+        //{
+        //    get
+        //    {
+        //        return rawContent;
+        //    }
+        //    set
+        //    {
+        //        rawContent = value;
+        //    }
+        //}
 
-        private Dictionary<int, string> indexedContent;
-        public Dictionary<int, string> IndexedContent
+        private Dictionary<int, string> indexedRawContent;
+        public Dictionary<int, string> IndexedRawContent
         {
             get
             {
-                return indexedContent;
+                return indexedRawContent;
             }
             set
             {
-                indexedContent = value;
+                indexedRawContent = value;
             }
         }
 
@@ -100,25 +113,21 @@ namespace PlaylistMain
         {
             Name = FileNameNoExt(m3uFile.Name);
             M3UInfo = m3uFile;
-            RawContent = ReadM3U(m3uFile); // related to fullPath(string) in M3USingleItem class
-            /*RawContent*/ ContentIndexer();
-            FormatedContent = DisplayContentM3U(m3uFile, LoadOptions);
+            //RawContent = ReadM3U(m3uFile); // related to fullPath(string) in M3USingleItem class
+            /*RawContent*/
+            IndexedRawContent = RawContentIndex(ReadM3U(m3uFile));
+            //_FormatedContent = DisplayContentM3U(m3uFile, LoadOptions);
+            FormatedContent = DisplayContentM3Udict(m3uFile, LoadOptions);
             LoadSnapshot["ShowComments"] = LoadOptions.ShowComments;
             LoadSnapshot["ShowPath"] = LoadOptions.ShowPath;
         }
 
-        public void ContentIndexer()
-        {
-            if (RawContent.Count > 0)
-            {
-                IndexedContent = RawContent.Select((val, index) => new { Index = index, Value = val })
-               .ToDictionary(i => i.Index, i => i.Value);
 
-                //foreach (KeyValuePair<int, string> i in IndexedContent)
-                //{
-                //    Console.WriteLine(i.Key + " : " + i.Value);
-                //}
-            }
+
+        // Formated content indexation { Full line : Formated line }; if comment { Comment : Comment }
+        private void FormatedContentIndex(List<string> FormatedContent)
+        {
+            
         }
     }
 }

@@ -46,6 +46,7 @@ namespace PlaylistMain
         PathFinder PathFinder = new PathFinder();
         M3U M3U = new M3U();
         LoadOptions LoadOptions = new LoadOptions();
+        SaveM3U SaveM3U = new SaveM3U();
         ///////////////////
 
         /// VARIABLES ////
@@ -75,7 +76,6 @@ namespace PlaylistMain
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             reloadListBox(PathFinder, M3U, filesListBox);
-            
         }
 
         // Get selected M3U
@@ -99,10 +99,15 @@ namespace PlaylistMain
                 M3UItem m3UItem = new M3UItem(file, LoadOptions);
                 M3UItems.Add(m3UItem);
 
-                foreach (string line in m3UItem.FormatedContent)
+                foreach (KeyValuePair<string, string> entry in m3UItem.FormatedContent)
                 {
-                    M3USingleItems.Add(new M3USingleItem(line, m3UItem.Name));
+                    M3USingleItems.Add(new M3USingleItem(entry.Key, entry.Value, m3UItem.Name));
                 }
+
+                //foreach (string line in m3UItem._FormatedContent)
+                //{
+                //    M3USingleItems.Add(new M3USingleItem(line, m3UItem.Name));
+                //}
             }
 
             btnLoadFile.IsEnabled = true;
@@ -130,6 +135,13 @@ namespace PlaylistMain
 
         private void MoveItem(string direction)
         {
+            if (editM3U.SelectedIndex == -1 || editM3U.Items.Count < 2)
+            {
+                btnUp.IsEnabled = false;
+                btnDown.IsEnabled = false;
+                return;
+            }
+
             var selectedIndex = editM3U.SelectedIndex;
             var itemToMove = M3USingleItems[selectedIndex];
 
@@ -160,16 +172,20 @@ namespace PlaylistMain
 
         private void RemoveItem()
         {
-            if (editM3U.Items.Count > 0)
+            if (editM3U.SelectedIndex == -1)
+            {
+                return;
+            }           
+            else if (editM3U.Items.Count > 0)
             {
                 var selectedIndex = editM3U.SelectedIndex;
                 M3USingleItems.RemoveAt(selectedIndex);
                 editM3U.SelectedIndex = selectedIndex - 1;
             }
-            else
-            {
-                btnRemove.IsEnabled = false;
-            }
+            //else
+            //{
+            //    btnRemove.IsEnabled = false;
+            //}
         }
         //////////////////////////
 
@@ -207,6 +223,7 @@ namespace PlaylistMain
         {
             loadM3U();
             btnSave.IsEnabled = true;
+            
         }
 
         private void btnLoadFile_Click(object sender, RoutedEventArgs e)
@@ -250,8 +267,27 @@ namespace PlaylistMain
             //}
         }
 
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            SaveM3U.Save(M3UItems[0], M3USingleItems);
+            infoLabel.Content = AppStrings.Items["FileSaved"] + infoLabel.Content;
+        }
+
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
+            //if (M3USingleItems.Count < 1)
+            //{
+            //    btnUp.IsEnabled = false;
+            //    btnDown.IsEnabled = false;
+            //}
+            //if (editM3U.SelectedIndex == -1)
+            //{
+            //    btnRemove.IsEnabled = false;
+            //}
+            if (editM3U.Items.Count < 1)
+            {
+                btnRemove.IsEnabled = false;
+            }
             RemoveItem();
         }
 
@@ -265,6 +301,7 @@ namespace PlaylistMain
             btnUp.IsEnabled = true;
             btnDown.IsEnabled = true;
             btnRemove.IsEnabled = true;
+            infoLabel.Content = M3UItems[0].M3UInfo.FullName;
         }
 
         ///// CHECKBOXES | LOAD OPTIONS /////

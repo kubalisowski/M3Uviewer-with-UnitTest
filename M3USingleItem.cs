@@ -39,11 +39,18 @@ namespace PlaylistMain
         //    fullPath = path; // related to RawContent (List<string>) in M3USingleItem class
         //}
 
-        public M3USingleItem(string line, string name)
+        /// TBD ?? M3UItem contains dict now for saving purposes
+        //public M3USingleItem(string line, string name)
+        //{
+        //    ContentLine = line;
+        //    Name = name;
+        //    fullPath = "none";
+        //}
+        public M3USingleItem(string path, string line, string name)
         {
+            fullPath = path;
             ContentLine = line;
             Name = name;
-            fullPath = "none";
         }
 
         // NICE ARRAY FOREACH METHOD

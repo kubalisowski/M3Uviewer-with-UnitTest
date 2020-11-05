@@ -21,7 +21,8 @@ namespace PlaylistMain
             { "Save", "Zapisz" },
             { "Up", "Up" },
             { "Down", "Down" },
-            { "Remove", "Usuń" }
+            { "Remove", "Usuń" },
+            { "FileSaved" , "Plik zapisany! " }
         };
     }
 }

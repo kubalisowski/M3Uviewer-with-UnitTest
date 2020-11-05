@@ -98,21 +98,52 @@ namespace PlaylistMain
 
             return noComments;
         }
-        // Overload
-        public ObservableCollection<M3USingleItem> HideComments(ObservableCollection<M3USingleItem> m3USingleItems)
+
+        protected Dictionary<string, string> HideCommentsDict(Dictionary<string, string> Content)
         {
-            ObservableCollection<M3USingleItem> update = new ObservableCollection<M3USingleItem>();
-            foreach (var item in m3USingleItems)
+            Dictionary<string, string> noComments = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, string> entry in Content)
             {
-                Match matchComment = Regex.Match(item.ContentLine, @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                Match matchComment = Regex.Match(entry.Key, @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 if (!matchComment.Success)
                 {
-                    update.Add(item);
+                    noComments.Add(entry.Key, entry.Value);
                 }
             }
 
-            return update;
+            return noComments;
         }
+
+        protected Dictionary<string, string> HideCommentsDict(List<string> Content)
+        {
+            Dictionary<string, string> noComments = new Dictionary<string, string>();
+            for (int i = 0; i < Content.Count; i++)
+            {
+                Match matchComment = Regex.Match(Content[i], @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                if (!matchComment.Success)
+                {
+                    noComments.Add(Content[i], Content[i]);
+                }
+            }
+
+            return noComments;
+        }
+
+        // Overload
+        //public ObservableCollection<M3USingleItem> HideComments(ObservableCollection<M3USingleItem> m3USingleItems)
+        //{
+        //    ObservableCollection<M3USingleItem> update = new ObservableCollection<M3USingleItem>();
+        //    foreach (var item in m3USingleItems)
+        //    {
+        //        Match matchComment = Regex.Match(item.ContentLine, @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        //        if (!matchComment.Success)
+        //        {
+        //            update.Add(item);
+        //        }
+        //    }
+
+        //    return update;
+        //}
 
         ///// Hide path
         public List<string> HidePath(List<string> lines)
@@ -138,244 +169,155 @@ namespace PlaylistMain
 
             return content;
         }
-        // Overload
-        public string HidePath(string line)
+
+        protected Dictionary<string, string> HidePathDict(List<string> lines)
         {
-            Match matchComment = Regex.Match(line, @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            if (matchComment.Success == true)
+            Dictionary<string, string> content = new Dictionary<string, string>();
+            string[] lineSplit;
+
+            for (int i = 0; i < lines.Count; i++)
             {
-                return line;
+                Match matchComment = Regex.Match(lines[i], @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+                // Just add comment
+                if (matchComment.Success == true)
+                {
+                    content.Add(lines[i], lines[i]);
+                }
+                // Get only file name
+                else
+                {
+                    lineSplit = lines[i].Split(@"\".ToCharArray());
+                    content.Add(lines[i], lineSplit[lineSplit.Length - 1]);
+                }
             }
-            else
-            {
-                string[] noPath = line.Split(@"\".ToCharArray());
-                return noPath[0];
-            }
+
+                return content;
+            
         }
+
+        // Overload
+        //public string HidePath(string line)
+        //{
+        //    Match matchComment = Regex.Match(line, @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        //    if (matchComment.Success == true)
+        //    {
+        //        return line;
+        //    }
+        //    else
+        //    {
+        //        string[] noPath = line.Split(@"\".ToCharArray());
+        //        return noPath[0];
+        //    }
+        //}
         
+        //public string DisplayContentLine(List<string> lines, LoadOptions LoadOptions)
+        //{
+        //    string finalLine = "";
+        //    foreach (string fullLine in lines)
+        //    {
+        //        if (LoadOptions.ShowPath == true)
+        //        {
+        //            finalLine = fullLine;
+        //        }
+        //        else
+        //        {
+        //            finalLine = HidePath(fullLine);
+        //        }
+        //    }
 
-
-        /////// Combine above
-        ////// Single file
-        /// TODO: BUG!
-        /// BUG HERE + PROPER DISPLAY (LOADPTIONS) - EXCEL IN RESOURCES
+        //    return finalLine;
+        //}
         //public string DisplayContentLine(string fullLine, LoadOptions LoadOptions)
         //{
         //    // temp variable
         //    string finalLine = fullLine;
-        //    List<string> fullContent = new List<string>();
-        //    fullContent.Add(fullLine);
+        //    if (LoadOptions.ShowPath == true)
+        //    {
+        //        finalLine = fullLine;
+        //    }
+        //    else
+        //    {
+        //        finalLine = HidePath(fullLine);
+        //    }
+            
+        //    return finalLine;
+        //}
+        /// M3U file
+        //public List<string> DisplayContentM3U(FileInfo m3uFile, LoadOptions LoadOptions)
+        //{
+        //    List<string> finalContent = new List<string>();
+        //    List<string> fullContent = ReadM3U(m3uFile);
         //    /// ALL
-        //    //Console.WriteLine(LoadOptions.ShowComments);
-        //    //Console.WriteLine(LoadOptions.ShowPath);
         //    if (LoadOptions.ShowPath == true && LoadOptions.ShowComments == true)
         //    {
-        //        finalLine = fullContent[0];
-        //        //Console.WriteLine(fullContent[0]);
+        //        finalContent = fullContent;
         //    }
-        //    /// NO PATH NO COMMENT
-        //    /// TODO: There is some bug; to be fixed
+        //    /// FILE NAMES
         //    else if (LoadOptions.ShowPath == false && LoadOptions.ShowComments == false)
         //    {
-        //        var tmp = HidePath(fullContent);
-        //        //Console.WriteLine(tmp.Count());
-        //        var tmp2 = HideComments(tmp);
-        //        Console.WriteLine(tmp2.Count());
-        //        if (tmp2.Count() > 0)
-        //        {
-        //            foreach (string item in tmp2)
-        //            {
-        //                finalLine = item;
-        //                Console.WriteLine(item);
-        //            }
-        //        }
+        //        finalContent = HideComments(HidePath(fullContent));
         //    }
         //    /// FULL PATHS
-        //    /// /// TODO: There is some bug; to be fixed
         //    else if (LoadOptions.ShowPath == true && LoadOptions.ShowComments == false)
         //    {
-        //        fullLine = HideComments(fullContent)[0];
+        //        finalContent = HideComments(fullContent);
         //    }
         //    /// COMMENTS
         //    else if (LoadOptions.ShowPath == false && LoadOptions.ShowComments == true)
         //    {
-        //        fullLine = HidePath(fullContent)[0];
+        //        finalContent = HidePath(fullContent);
         //    }
 
-        //    return fullLine;
+        //    return finalContent;
         //}
-        public string DisplayContentLine(List<string> lines, LoadOptions LoadOptions)
-        {
-            string finalLine = "";
-            foreach (string fullLine in lines)
-            {
-                if (LoadOptions.ShowPath == true)
-                {
-                    finalLine = fullLine;
-                }
-                else
-                {
-                    finalLine = HidePath(fullLine);
-                }
-            }
 
-            return finalLine;
-        }
-        public string DisplayContentLine(string fullLine, LoadOptions LoadOptions)
+        // New method returning dictionary
+        public Dictionary<string, string> DisplayContentM3Udict(FileInfo m3uFile, LoadOptions LoadOptions)
         {
-            // temp variable
-            string finalLine = fullLine;
-            if (LoadOptions.ShowPath == true)
-            {
-                finalLine = fullLine;
-            }
-            else
-            {
-                finalLine = HidePath(fullLine);
-            }
-            /// ALL
-            //if (LoadOptions.ShowPath == true && LoadOptions.ShowComments == true)
-            //{
-            //    finalLine = fullLine;
-            //}
-            ///// NO PATH NO COMMENT
-            ////else if (LoadOptions.ShowPath == false && LoadOptions.ShowComments == false)
-            ////{
-            ////    var finalLine = HidePath(fullLine);
-            ////    //finalLine = HideComments(tmp);
-            ////}
-            ///// YES PATH NO COMMENTS
-            //else if (LoadOptions.ShowPath == true && LoadOptions.ShowComments == false)
-            //{
-            //    finalLine = HideComments(fullLine);
-            //}
-            ///// NO PATH YES COMMENTS
-            //else if (LoadOptions.ShowPath == false && LoadOptions.ShowComments == true)
-            //{
-            //    finalLine = HidePath(fullLine);
-            //}
+            Dictionary<string, string> finalContent = new Dictionary<string, string>();         
+            List<string> readContent = ReadM3U(m3uFile);
 
-            return finalLine;
-        }
-        /// M3U file
-        public List<string> DisplayContentM3U(FileInfo m3uFile, LoadOptions LoadOptions)
-        {
-            List<string> finalContent = new List<string>();
-            List<string> fullContent = ReadM3U(m3uFile);
             /// ALL
             if (LoadOptions.ShowPath == true && LoadOptions.ShowComments == true)
             {
-                finalContent = fullContent;
+                foreach (string line in readContent)
+                {
+                    finalContent.Add(line, line);
+                }
             }
             /// FILE NAMES
             else if (LoadOptions.ShowPath == false && LoadOptions.ShowComments == false)
             {
-                finalContent = HideComments(HidePath(fullContent));
+                finalContent = HideCommentsDict(HidePathDict(readContent));
             }
             /// FULL PATHS
             else if (LoadOptions.ShowPath == true && LoadOptions.ShowComments == false)
             {
-                finalContent = HideComments(fullContent);
+                finalContent = HideCommentsDict(readContent);
             }
             /// COMMENTS
             else if (LoadOptions.ShowPath == false && LoadOptions.ShowComments == true)
             {
-                finalContent = HidePath(fullContent);
+
+                finalContent = HidePathDict(readContent);
             }
 
             return finalContent;
         }
 
-        /// TBD ???
-        /// Single file
-        //public string DisplayContent(string line, LoadOptions LoadOptions)
-        //{
-        //    string ContentLine;
-        //    List<string> tempContent = new List<string>();
-        //    List<string> tempLine = new List<string>();
-        //    tempLine.Add(line);
+        // Whole M3U content indexation
+        protected Dictionary<int, string> RawContentIndex(List<string> RawContent)
+        {
+            Dictionary<int, string> IndexedRawContent = new Dictionary<int, string>();
 
-        //    /// ALL
-        //    if (LoadOptions.ShowPath == true)
-        //    {
-        //        tempContent.Add(line);
-        //    }
-        //    /// FILE NAME
-        //    else if (LoadOptions.ShowPath == false)
-        //    {
-        //        tempContent = HideComments(HidePath(tempLine));
-        //    }
+            if (RawContent.Count > 0)
+            {
+                IndexedRawContent = RawContent.Select((val, index) => new { Index = index, Value = val })
+               .ToDictionary(i => i.Index, i => i.Value);
+            }
 
-        //    ContentLine = tempContent[0];
-        //    return ContentLine;
-        //}
-        ///////// Above method overload for each cases mirror List<string> DisplayContent
-
-
-        //private Dictionary<int, string> CommentIndexer(ObservableCollection<M3USingleItem> actualItemsM3U, LoadOptions LoadOptions, List<M3UItem> M3UItems)
-        //{
-        //    /// <index, comment> -- comments to be put at the same indexes as they are originally in M3U file
-        //    Dictionary<int, string> indexComment = new Dictionary<int, string>();
-        //    /// Only one M3U file can be edited at the time, but the list is used for further changes
-        //    foreach (M3UItem M3U in M3UItems)
-        //    {
-        //        foreach (string line in M3U.RawContent)
-        //        {
-        //            Match matchComment = Regex.Match(line, @"#.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        //            if (matchComment.Success)
-        //            {
-        //                indexComment.Add(M3U.RawContent.IndexOf(line), line);
-        //            }
-        //        }
-        //    }
-
-        //    return indexComment;
-        //}
-
-
-        ///// Re-load M3U displayed content
-        //public ObservableCollection<M3USingleItem> ReloadEditBox(ObservableCollection<M3USingleItem> ObsItemsM3U, LoadOptions LoadOptions, List<M3UItem> M3UItems)
-        //{
-        //    ObservableCollection<M3USingleItem> ReloadedItems = new ObservableCollection<M3USingleItem>();
-        //    /// <index, comment> -- comments to be put at the same list indexes as they are originally in M3U file
-        //    Dictionary<int, string> indexComment = new Dictionary<int, string>();
-
-        //    foreach (M3USingleItem single_item in ObsItemsM3U)
-        //    {
-        //        /// Loaded file
-        //        if (single_item.Name == "AddedFile")
-        //        {
-        //            single_item.ContentLine = DisplayContentLine(single_item.fullPath, LoadOptions);
-        //            ReloadedItems.Add(single_item);
-        //        }
-        //        /// M3U origin
-        //        else
-        //        {
-        //            /// Show path
-        //            if (LoadOptions.ShowPath == true)
-        //            {
-        //                single_item.ContentLine = DisplayContentLine(single_item.fullPath, LoadOptions);
-        //                ReloadedItems.Add(single_item);
-        //            }
-        //            /// Restore comments - put them in the same list index as it is in M3U file
-        //            if (LoadOptions.ShowComments == true)
-        //            {
-        //                indexComment = CommentIndexer(ObsItemsM3U, LoadOptions, M3UItems);
-        //            }
-        //        }
-        //    }
-
-        //    if (indexComment.Count() > 0)
-        //    {
-        //        foreach (var dict in indexComment)
-        //        {
-        //            ReloadedItems.Insert(dict.Key, new M3USingleItem(dict.Value, M3UItems[0].Name));
-        //        }
-        //    }
-
-        //    return ReloadedItems;
-        //}
+            return IndexedRawContent;
+        }
     }
 }
-    ////////////////////////////////
-
