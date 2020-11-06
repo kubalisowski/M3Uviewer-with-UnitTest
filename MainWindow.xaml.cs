@@ -223,7 +223,8 @@ namespace PlaylistMain
         {
             loadM3U();
             btnSave.IsEnabled = true;
-            
+            fileLocationInfoBox.Text = M3UItems[0].M3UInfo.FullName;
+
         }
 
         private void btnLoadFile_Click(object sender, RoutedEventArgs e)
@@ -270,7 +271,7 @@ namespace PlaylistMain
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             SaveM3U.Save(M3UItems[0], M3USingleItems);
-            infoLabel.Content = AppStrings.Items["FileSaved"] + infoLabel.Content;
+            msgBox.Text = AppStrings.Items["FileSaved"] + DateTime.Now.ToString("HH:mm");
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
@@ -301,7 +302,6 @@ namespace PlaylistMain
             btnUp.IsEnabled = true;
             btnDown.IsEnabled = true;
             btnRemove.IsEnabled = true;
-            infoLabel.Content = M3UItems[0].M3UInfo.FullName;
         }
 
         ///// CHECKBOXES | LOAD OPTIONS /////
@@ -315,7 +315,21 @@ namespace PlaylistMain
         private void showPath_Checked(object sender, RoutedEventArgs e)
         {
             LoadOptions.ShowPath = (bool)showPath.IsChecked;
-        } 
+        }
+
+        /// TEXTBOX
+        
+        private void fileLocationInfoBox_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            
+            Clipboard.SetText(fileLocationInfoBox.Text);
+            MessageBox.Show("CHUJ!");
+        }
+
+        private void fileLocationInfoBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
 

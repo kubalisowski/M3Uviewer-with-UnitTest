@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PlaylistMain
 {
-    class Config
+    public class Config
         {
             private string todayPath = @"C:\Users\Sferis\source\repos\PlaylistMain\__FOLDERS\current day\Archiwum\Public\RADIO\reklamy m3u";
             public string TodayPath
